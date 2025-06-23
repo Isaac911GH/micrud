@@ -1,42 +1,63 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+import React, { useState, useEffect } from 'react';
+import Form from './components/Form';
+import List from './components/List';
+import './App.css';
+
+function App() {
+  // Estado que guarda los elementos (ítems) del CRUD
+  const [items, setItems] = useState([]);
+
+  // Estado para guardar el ítem que se desea editar
+  const [itemToEdit, setItemToEdit] = useState(null);
+
+  // Al cargar la app, recupera los datos guardados en localStorage
+  useEffect(() => {
+    const storedItems = JSON.parse(localStorage.getItem('items')) || [];
+    setItems(storedItems);
+  }, []);
+
+  // Cada vez que cambian los ítems, actualiza el localStorage
+  useEffect(() => {
+    localStorage.setItem('items', JSON.stringify(items));
+  }, [items]);
+
+  // Función para agregar o actualizar un ítem
+  const addOrUpdateItem = (value) => {
+    if (itemToEdit) {
+      // Si se está editando, actualiza el ítem correspondiente
+      setItems(items.map(item => item.id === itemToEdit.id ? { ...item, value } : item));
+      setItemToEdit(null); // Limpia el ítem en edición
+    } else {
+      // Si no, agrega un nuevo ítem con un id único
+      setItems([...items, { id: Date.now(), value }]);
+    }
+  };
+
+  // Función para eliminar un ítem por su id
+  const deleteItem = (id) => {
+    setItems(items.filter(item => item.id !== id));
+  };
+
+  // Función para seleccionar un ítem para editar
+  const editItem = (item) => {
+    setItemToEdit(item);
+  };
+
+  // Renderizado principal
+  return (
+    <div className="App">
+      <h1>CRUD con LocalStorage</h1>
+      <Form
+        addOrUpdateItem={addOrUpdateItem}
+        itemToEdit={itemToEdit}
+      />
+      <List
+        items={items}
+        deleteItem={deleteItem}
+        editItem={editItem}
+      />
+    </div>
+  );
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
+export default App;
