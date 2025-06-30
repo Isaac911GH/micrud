@@ -1,20 +1,21 @@
 import React from "react";
 import Item from './Item';
 
-// Componente que muestra una lista de alumnos
-function List({ items, deleteItem, editItem }) {
-  return (
-    <ul>
-      {items.map((item) => (
-        <Item
-          key={item.id}
-          item={item}
-          deleteItem={deleteItem}
-          editItem={editItem}
-        />
-      ))}
-    </ul>
-  );
-}
+
+
+function List({items, deleteItem, editItem}){
+    return(
+        <ul>
+            {items.map((item)=>(
+                <Item
+                key={item.id}
+                item={item}
+                deleteItem={deleteItem}
+                editItem={editItem}
+                />
+            ))}
+        </ul>
+    );
+};
 
 export default List;
